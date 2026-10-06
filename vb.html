@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tra cứu văn bằng</title>
+  <link rel="icon" href="images/logo.jpg" type="image/x-icon">
+   <!-- Bootstrap -->
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+<!-- jQuery + DataTables -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+ 
+ <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"> -->
+   <link href="css/dataTables.bootstrap5.min.css" rel="stylesheet">
+
+  <!-- <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script> -->
+  <script src="js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+  
+  <link href="css/style.css" rel="stylesheet">
+  
+ 
+ 
+
+
+  <script>
+	  function formatDateToDDMMYYYY(input) {
+	  const parts = input.split("-");
+	  if (parts.length !== 3) return input;
+	  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+	}
+
+  </script>
+  
+  <style>
+    .not-found { color: red; font-weight: bold; margin-top: 20px; }
+    .dataTables_wrapper .dataTables_paginate .paginate_button { padding: 0 !important; }
+	  @media (max-width: 576px) { /* Thiết bị nhỏ hơn 576px, như smartphone */
+  		.logo-img {
+  		  max-height: 60px;
+  		}
+	  }
+  </style>
+</head>
+<body>
+
+<header  >
+<div class="header-container" > 
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" style="border-bottom: 3px solid #154c79;">
+  <div class="container-fluid" >
+   
+    <a class="navbar-brand" href="vb.html">
+        <img src="images/logotracuu.png" alt="Tra cuu van bang" >
+    </a>
+        
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#">Trang chủ</a></li>
+        <li class="nav-item"><a class="nav-link active" href="#">Tra cứu văn bằng</a></li>
+        <!--
+        <li class="nav-item"><a class="nav-link" href="#">Tra cứu chứng chỉ</a></li>
+    	-->
+        <li class="nav-item"><a class="nav-link" href="#">Liên hệ</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+</div>
+</header>
+
+
+
+
+
+<main >
+<div class="container" style="font-family: Arial, sans-serif;font-size:12px;" >
+	<div style="font-family: Arial, sans-serif;font-size:16px; font-weight:500">	TRA CỨU VĂN BẰNG </div>
+  <div class="card p-4 mb-4" style="font-family: Arial, sans-serif;font-size:12px;">
+    <form id="search-form">
+      <div class="row mb-3">
+        <div class="col-md-4" style="padding-top:5px;">
+          <label >Họ và tên</label>
+          <input type="text" class="form-control" id="hoTen">
+        </div>
+        <div class="col-md-4" style="padding-top:5px;">
+          <label>Ngày tháng năm sinh</label>
+          <input type="date" class="form-control" id="ngaySinh">
+        </div>
+        <div class="col-md-4" style="padding-top:5px;">
+          <label>Trình độ đào tạo</label>
+          <select class="form-select" id="trinhDo" style="font-family: Arial, sans-serif;font-size:12px;">
+            <option value="">-- Tất cả --</option>
+            <option value="Cao đẳng">Cao đẳng</option>
+            <option value="Trung cấp">Trung cấp</option>
+          </select>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-4" style="padding-top:5px;">
+          <label>Số hiệu bằng TN</label>
+          <input type="text" class="form-control" id="soHieu">
+        </div>
+        <div class="col-md-4" style="padding-top:5px;">
+          <label>Năm tốt nghiệp</label>
+          <input type="text" class="form-control" id="namTotNghiep">
+        </div>
+        <div class="col-md-4 d-flex align-items-end" >
+          <button type="submit" class="btn btn-primary me-2" style="  margin-top:15px; padding: 10px 24px;width: 250px; font-family: Arial, sans-serif;font-size:12px;">Tìm kiếm</button>
+          <button type="button" class="btn btn-secondary" id="reset-btn" style=" margin-top:15px; padding: 10px 24px;width: 250px; font-family: Arial, sans-serif;font-size:12px;">Nhập lại</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div id="result-wrapper" style="display:none;">
+    <div id="not-found" class="not-found text-center" style="display:none;">
+      Không tìm thấy kết quả phù hợp.
+    </div>
+
+    <table id="result-table" class="table table-bordered table-striped" style="font-family: Arial, sans-serif;font-size:12px; margin-top: 10px;">
+      <thead class="table-light">
+        <tr>
+          <th>Họ và tên</th>
+          <th>Ngày tháng năm sinh</th>
+          <th>Ngành Nghề đào tạo</th>
+          <th>Xếp loại</th>
+          <th>Số QĐ tốt nghiệp</th>
+          <th>Số hiệu bằng TN</th>
+          <th >Chi tiết</th>
+        </tr>
+      </thead>
+      <tbody id="result-body"></tbody>
+    </table>
+  </div>
+</div>
+
+
+<div class="modal fade" id="detailModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Chi tiết văn bằng</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const apiUrl = 'https://script.google.com/macros/s/AKfycbwx5FQDAW4EipCTJZkB85wD1UIqL6iZciobh-W6DqAnCqUH6QSp4ms-3ZykoNOhgvn3pQ/exec?sheet=infovb'; // thay bằng URL API của bạn
+
+function resetForm() {
+  document.getElementById("search-form").reset();
+  $('#not-found').hide();
+  $('#result-wrapper').hide();
+  if ($.fn.DataTable.isDataTable('#result-table')) {
+    $('#result-table').DataTable().clear().draw();
+  }
+}
+
+$('#reset-btn').click(resetForm);
+
+$('#search-form').submit(function(e) {
+  e.preventDefault();
+  const hoTen = $('#hoTen').val().trim().toLowerCase();
+  const ngaySinh = $('#ngaySinh').val().trim();
+  const formattedNgaySinh = formatDateToDDMMYYYY(ngaySinh);
+  const trinhDo = $('#trinhDo').val().trim().toLowerCase();
+  const soHieu = $('#soHieu').val().trim();
+  const namTotNghiep = $('#namTotNghiep').val().trim();
+
+  if (!hoTen && !ngaySinh && !trinhDo && !soHieu && !namTotNghiep) {
+    alert('Vui lòng nhập ít nhất một tiêu chí tìm kiếm.');
+    return;
+  }
+
+  $.getJSON(apiUrl, function(data) {
+    const results = data.filter(item => {
+      return (!hoTen || item['Họ và tên'].toLowerCase().includes(hoTen)) &&
+             (!ngaySinh || item['Ngày tháng năm sinh'] === formattedNgaySinh) &&
+             (!trinhDo || item['Trình độ đào tạo'].toLowerCase() === trinhDo) &&
+             (!soHieu || item['Số hiệu bằng TN'] === soHieu) &&
+             (!namTotNghiep || item['Năm tốt nghiệp'].toString().includes(namTotNghiep));
+    });
+
+    $('#result-wrapper').show();
+
+    if (results.length === 0) {
+      $('#not-found').show().text('Không tìm thấy kết quả phù hợp! Mọi chi tiết xin liên hệ cán bộ phụ trách, số điện thoại: 0337.793.968');
+      if ($.fn.DataTable.isDataTable('#result-table')) {
+        $('#result-table').DataTable().clear().draw();
+      }
+      return;
+    }
+
+    $('#not-found').hide();
+
+    if (!$.fn.DataTable.isDataTable('#result-table')) {
+      $('#result-table').DataTable({
+        language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/vi.json' },
+        data: results.map((item, index) => [
+          item['Họ và tên'],
+          item['Ngày tháng năm sinh'],
+          item['Ngành Nghề đào tạo'],
+          item['Xếp loại tốt nghiệp'],
+          item['Số QĐ công nhận tốt nghiệp'],
+          item['Số hiệu bằng TN'],
+          `<button class="btn btn-sm btn-info" data-index="${index}" data-bs-toggle="modal" data-bs-target="#detailModal">🔍</button>`
+        ])
+      });
+    } else {
+      const table = $('#result-table').DataTable();
+      table.clear();
+      results.forEach((item, index) => {
+        table.row.add([
+          item['Họ và tên'],
+          item['Ngày tháng năm sinh'],
+          item['Ngành Nghề đào tạo'],
+          item['Xếp loại tốt nghiệp'],
+          item['Số QĐ công nhận tốt nghiệp'],
+          item['Số hiệu bằng TN'],
+          `<button class="btn btn-sm btn-info" data-index="${index}" data-bs-toggle="modal" data-bs-target="#detailModal">🔍</button>`
+        ]);
+      });
+      table.draw();
+    }
+
+    window.searchResults = results;
+  }).fail(function(jqXHR, textStatus, errorThrown) {
+    $('#result-table').hide();
+    $('#result-wrapper').show();
+    $('#not-found').show().text('Không thể tải dữ liệu. Vui lòng kiểm tra lại đường dẫn hoặc thử lại sau.');
+    console.error("Lỗi khi tải dữ liệu:", textStatus, errorThrown);
+  });
+});
+
+$('#detailModal').on('show.bs.modal', function (event) {
+  const button = $(event.relatedTarget);
+  const index = button.data('index');
+  const data = window.searchResults[index];
+
+  let html = '<ul class="list-group">';
+  for (const key in data) {
+    html += `<li class="list-group-item"><strong>${key}:</strong> ${data[key]}</li>`;
+  }
+  html += '</ul>';
+
+  $('#modal-body').html(html);
+});
+</script>
+
+
+</script>
+<!--
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+-->
+<script src="js/bootstrap.bundle.min.js"></script>
+
+</main>
+
+
+<footer>
+  <!--<div class="footer-container">
+  
+     Div thứ nhất: Logo và Slogan 
+    <div class="footer-logo">
+      <img src="images/logo.png" alt="Logo" class="logo">
+      <p class="slogan">Slogan của website</p>
+
+
+     Div thứ hai: Thông tin liên hệ 
+    <div class="footer-contact">
+      <p> <img src="images/home.png" >Trụ sở chính: KV 8, P. Bùi Thị Xuân, tỉnh Bình Định</p>
+    </div>  
+    
+     Div thứ ba: Bản đồ vị trí 
+    <div class="footer-map">
+      <h3>Vị trí</h3>
+      <iframe src="https://www.google.com/maps/embed?pb=..." width="300" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+   </div> 
+   
+</div>  -->
+
+  <!-- Copyright -->
+  <div class="footer-copyright">
+    <p>&copy; 2024 Trường Cao đẳng Cơ điện - Xây dựng và Nông Lâm Trung Bộ.
+    </p>
+    <p> <img src="images/home.png">Trụ sở chính: KV 8, P. Bùi Thị Xuân, tỉnh Bình Định</p>
+ </div>
+  
+</footer>
+
+</body>
+</html>
+
+
+
+
